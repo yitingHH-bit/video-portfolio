@@ -135,9 +135,10 @@
         const u = new URL(url);
         if(u.hostname.includes('youtu.be')) return u.pathname.slice(1);
         if(u.searchParams.get('v')) return u.searchParams.get('v');
-        const m = u.pathname.match(/\/embed\/([\w-]+)/);
+        const m = u.pathname.match(/(?:\/embed\/|\/shorts\/)([\w-]+)/);
         return m? m[1] : '';
       }catch{ return '' }
+    }catch{ return '' }
     }
 
     function normText(s){return (s||'').toLowerCase()}
