@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的视频作品集</title>
+  <meta name="description" content="一个轻量、可免费托管在 GitHub Pages 的视频作品页面。" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1530; --ink:#e6ecff; --muted:#9fb0d8; --brand:#6aa2ff;
+      --card:#121938; --card-hover:#17214a; --border:rgba(255,255,255,.08)
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:radial-gradient(1200px 600px at 80% -10%, rgba(106,162,255,.12), transparent 60%),
+                 radial-gradient(1000px 500px at 10% -20%, rgba(150,90,255,.10), transparent 60%), var(--bg);
+         color:var(--ink); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, PingFang SC, Noto Sans SC, Arial, sans-serif}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:28px 18px 80px}
+    header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#6aa2ff,#965aff);display:grid;place-items:center;box-shadow:0 8px 30px rgba(106,162,255,.25)}
+    .logo span{font-weight:800}
+    h1{margin:0;font-size:1.4rem;letter-spacing:.5px}
+    .muted{color:var(--muted)}
+
+    .toolbar{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    .search,.select{position:relative}
+    input[type="search"], select{background:var(--panel);border:1px solid var(--border);color:var(--ink);padding:10px 12px;border-radius:12px;outline:none;min-width:220px}
+    input[type="search"]::placeholder{color:#9fb0d8aa}
+    .tagbar{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--panel);cursor:pointer;color:var(--muted);transition:.2s}
+    .tag.active{background:rgba(106,162,255,.15);color:#cfe1ff;border-color:rgba(106,162,255,.35)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:20px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .12s ease, background .2s}
+    .card:hover{transform:translateY(-2px);background:var(--card-hover)}
+    .thumb{aspect-ratio:16/9;background:#0a0f22;display:block;width:100%;position:relative}
+    .thumb img, .thumb video{width:100%;height:100%;object-fit:cover;display:block}
+    .badge{position:absolute;inset:auto 10px 10px auto;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);padding:2px 8px;border-radius:8px;font-size:.75rem}
+    .content{padding:12px 14px}
+    .title{font-weight:700;font-size:1.0rem;margin:0 0 4px}
+    .meta{font-size:.85rem;color:var(--muted)}
+
+    .empty{opacity:.75;text-align:center;padding:48px;border:1px dashed var(--border);border-radius:16px}
+
+    footer{margin-top:28px;color:var(--muted);font-size:.9rem}
+    .dot{opacity:.5;margin:0 8px}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:#1a2250;border:1px solid var(--border);padding:8px 12px;border-radius:12px}
+    .btn:hover{background:#1d2760}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"><span>🎬</span></div>
+      <div>
+        <h1>我的视频作品集</h1>
+        <div class="muted">可部署到 GitHub Pages / Netlify / Cloudflare Pages 的纯静态页面</div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input id="q" class="search" type="search" placeholder="搜索标题 / 简介 / 标签… (例如: demo / 教程 / 2025)" />
+      <select id="sort" class="select" aria-label="排序">
+        <option value="date_desc">按日期：新 → 旧</option>
+        <option value="date_asc">按日期：旧 → 新</option>
+        <option value="title_asc">按标题 A→Z</option>
+        <option value="title_desc">按标题 Z→A</option>
+      </select>
+    </div>
+
+    <div id="tagbar" class="tagbar" aria-label="标签"></div>
+
+    <section id="grid" class="grid" role="list"></section>
+    <div id="empty" class="empty" style="display:none">没有匹配的视频，换个关键词或清除标签试试～</div>
+
+    <footer>
+      <p>本页为静态文件 <code>index.html</code>，可直接托管在 <strong>GitHub Pages</strong>（免费）。也可部署到 Netlify / Vercel / Cloudflare Pages。</p>
+      <a class="btn" href="https://docs.github.com/pages" target="_blank" rel="noreferrer">📦 GitHub Pages 文档</a>
+      <span class="dot">•</span>
+      <a class="btn" href="https://developers.cloudflare.com/pages/" target="_blank" rel="noreferrer">⚡ Cloudflare Pages</a>
+    </footer>
+  </div>
+
+  <script>
+    // ====== ① 在这里填你的“数据源” ======
+    // 支持三种来源：
+    //   type: 'youtube' | 'vimeo' | 'mp4'
+    //   url:   对应平台的分享链接 / 或 mp4 直链
+    //   thumb: 可选，若留空：YouTube 自动抓缩略图；vimeo/mp4 需手动填或使用首帧图
+    //   tags:  任意标签数组
+    //   date:  'YYYY-MM-DD' 用于排序
+    const VIDEOS = [
+      {
+        title: '机器人室内导航 Demo',
+        desc: 'Unitree Go2 强化学习导航，记录一次成功避障到达的路径。',
+        type: 'youtube',
+        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        thumb: '',
+        tags: ['机器人','RL','Demo'],
+        date: '2025-08-28',
+        duration: '02:41'
+      },
+      {
+        title: 'LiDAR 可视化与地图构建',
+        desc: '实时点云到 LaserScan 的转换与 SLAM 效果预览。',
+        type: 'mp4',
+        url: 'videos/lidar_slam_preview.mp4',
+        thumb: 'images/lidar_slam_preview.jpg',
+        tags: ['LiDAR','SLAM'],
+        date: '2025-07-20',
+        duration: '01:07'
+      },
+      {
+        title: '深度学习推理延迟对比',
+        desc: '本地 vs 5G MEC 云端推理的 RTT/能耗对比短片。',
+        type: 'vimeo',
+        url: 'https://vimeo.com/76979871',
+        thumb: 'images/edp_compare.jpg',
+        tags: ['边缘计算','性能'],
+        date: '2025-06-12',
+        duration: '00:52'
+      }
+    ];
+
+    // ====== ② 可选：定制站点信息 ======
+    document.title = '我的视频作品集 · GitHub Pages 模板';
+
+    // ====== 工具函数 ======
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    function youtubeIdFromUrl(url){
+      try{
+        const u = new URL(url);
+        if(u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+        if(u.searchParams.get('v')) return u.searchParams.get('v');
+        const m = u.pathname.match(/\/embed\/([\w-]+)/);
+        return m? m[1] : '';
+      }catch{ return '' }
+    }
+
+    function normText(s){return (s||'').toLowerCase()}
+
+    function uniqueTags(items){
+      const set = new Set();
+      items.forEach(it=> (it.tags||[]).forEach(t=> set.add(t)) );
+      return Array.from(set);
+    }
+
+    // ====== 渲染标签 ======
+    const state = { query:'', tag:null, sort:'date_desc' };
+
+    function renderTags(){
+      const bar = $('#tagbar');
+      bar.innerHTML = '';
+      const tags = uniqueTags(VIDEOS);
+      if(tags.length===0) return;
+      const mk = (t)=>{
+        const el = document.createElement('button');
+        el.className = 'tag' + (state.tag===t? ' active':'');
+        el.textContent = t;
+        el.onclick = ()=>{ state.tag = (state.tag===t? null : t); update(); };
+        return el;
+      }
+      const clear = document.createElement('button');
+      clear.className = 'tag' + (!state.tag? ' active':'');
+      clear.textContent = '全部';
+      clear.onclick = ()=>{ state.tag=null; update(); };
+      bar.append(clear);
+      tags.sort((a,b)=> a.localeCompare(b,'zh')); // 中文友好排序
+      tags.forEach(t=> bar.append(mk(t)));
+    }
+
+    // ====== 渲染卡片 ======
+    function cardHtml(v){
+      // 计算缩略图
+      let thumb = v.thumb;
+      if(!thumb && v.type==='youtube'){
+        const id = youtubeIdFromUrl(v.url);
+        if(id) thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+      }
+      const safeDesc = (v.desc||'').replace(/[<>]/g,'');
+      return `
+        <article class="card" role="listitem">
+          <a href="#" data-open>
+            <div class="thumb">
+              ${ v.type==='mp4' ?
+                `<video src="${v.url}" preload="metadata" muted playsinline></video>` :
+                `<img src="${thumb||''}" alt="${v.title}" loading="lazy" />`
+              }
+              ${ v.duration? `<span class="badge">${v.duration}</span>`:''}
+            </div>
+            <div class="content">
+              <h3 class="title">${v.title}</h3>
+              <div class="meta">${(v.tags||[]).join(' · ')}${v.date? ` · ${v.date}`:''}</div>
+              <p class="muted" style="margin:.25rem 0 0">${safeDesc}</p>
+            </div>
+          </a>
+        </article>`
+    }
+
+    function openViewer(v){
+      // 简易查看器：直接新开标签到可播放链接
+      if(v.type==='youtube'){
+        const id = youtubeIdFromUrl(v.url);
+        if(id) window.open(`https://www.youtube.com/watch?v=${id}`,'_blank');
+        else window.open(v.url,'_blank');
+      }else{
+        window.open(v.url,'_blank');
+      }
+    }
+
+    function applyFilterSort(items){
+      const q = normText(state.query);
+      let list = items.filter(v=>{
+        const inText = normText(v.title+' '+(v.desc||'')+' '+(v.tags||[]).join(' '));
+        const okQ = !q || inText.includes(q);
+        const okTag = !state.tag || (v.tags||[]).includes(state.tag);
+        return okQ && okTag;
+      });
+      switch(state.sort){
+        case 'date_asc': list.sort((a,b)=> (a.date||'').localeCompare(b.date||'')); break;
+        case 'title_asc': list.sort((a,b)=> a.title.localeCompare(b.title,'zh')); break;
+        case 'title_desc': list.sort((a,b)=> b.title.localeCompare(a.title,'zh')); break;
+        default: // date_desc
+          list.sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+      }
+      return list;
+    }
+
+    function update(){
+      const grid = $('#grid');
+      const list = applyFilterSort(VIDEOS);
+      grid.innerHTML = list.map(cardHtml).join('');
+      // 绑定打开
+      $$('#grid [data-open]').forEach((a, i)=>{
+        a.addEventListener('click', (e)=>{ e.preventDefault(); openViewer(list[i]); });
+      });
+      $('#empty').style.display = list.length? 'none':'block';
+      // 持久化查询参数
+      const sp = new URLSearchParams();
+      if(state.query) sp.set('q', state.query);
+      if(state.tag) sp.set('tag', state.tag);
+      if(state.sort!=='date_desc') sp.set('sort', state.sort);
+      history.replaceState(null,'', location.pathname + (sp.toString()? ('?'+sp.toString()):''));
+    }
+
+    // ====== 事件绑定 ======
+    $('#q').addEventListener('input', (e)=>{ state.query = e.target.value; update(); })
+    $('#sort').addEventListener('change', (e)=>{ state.sort = e.target.value; update(); })
+
+    // 从 URL 恢复查询
+    (function initFromQuery(){
+      const p = new URLSearchParams(location.search);
+      state.query = p.get('q')||''; $('#q').value = state.query;
+      state.tag = p.get('tag');
+      state.sort = p.get('sort')||'date_desc'; $('#sort').value = state.sort;
+    })();
+
+    renderTags();
+    update();
+  </script>
+</body>
+</html>
