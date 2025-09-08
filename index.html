@@ -1,89 +1,138 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>我的视频作品集</title>
-  <meta name="description" content="一个极简、无筛选项的静态视频作品页，适合部署到 GitHub Pages。" />
+  <title>Unitree Go2 — RL Demo & Paper Abstract</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:#0b1020; --panel:#0f1530; --ink:#e6ecff; --muted:#9fb0d8; --border:rgba(255,255,255,.08);
-      --card:#121938; --card-hover:#17214a; --brand:#6aa2ff;
+      --bg: #0b0d10;
+      --card: #12161b;
+      --card-2: #0f1419;
+      --fg: #e8eef5;
+      --muted: #9db0c3;
+      --accent: #4ea1ff;
+      --radius: 18px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(106,162,255,.12), transparent 60%),
-      radial-gradient(1000px 500px at 10% -20%, rgba(150,90,255,.10), transparent 60%), var(--bg);
-      color:var(--ink); font:16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, PingFang SC, Noto Sans SC, Arial, sans-serif}
-    a{color:inherit}
-    .container{max-width:1280px;margin:0 auto;padding:28px 18px 80px}
-    header{display:flex;align-items:center;gap:14px}
-    .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#6aa2ff,#965aff);display:grid;place-items:center;box-shadow:0 8px 30px rgba(106,162,255,.25)}
-    h1{margin:0;font-size:1.35rem;letter-spacing:.3px}
-    .muted{color:var(--muted)}
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% 0%, #0e1320 0%, var(--bg) 55%), var(--bg);
+      color: var(--fg);
+      line-height: 1.65;
+    }
+    .wrap { max-width: 1100px; margin: 40px auto 80px; padding: 0 20px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .title { font-size: clamp(22px, 3.2vw, 34px); font-weight: 800; letter-spacing: 0.2px; }
+    .subtitle { color: var(--muted); font-size: 14px; }
 
-    .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .12s ease, background .2s}
-    .card:hover{transform:translateY(-2px);background:var(--card-hover)}
-    .player{position:relative;width:100%;aspect-ratio:16/9;background:#0a0f22}
-    .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-bottom:1px solid var(--border)}
-    .content{padding:12px 14px}
-    .title{font-weight:700;font-size:1.0rem;margin:.1rem 0 .25rem}
-    .meta{font-size:.85rem;color:var(--muted)}
+    .card { background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45); }
+    .video-card { padding: 14px; }
 
-    footer{margin-top:28px;color:var(--muted);font-size:.9rem}
-    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px}
+    .video {
+      width: 100%;
+      aspect-ratio: 16 / 9; /* 让窗口自动适配并更大 */
+      display: block;
+      border: 0; border-radius: calc(var(--radius) - 6px);
+    }
+
+    .paper { margin-top: 26px; padding: 26px clamp(18px, 3vw, 28px); }
+    h2 { font-size: clamp(18px, 2.4vw, 24px); margin: 0 0 10px; }
+    h3 { font-size: clamp(16px, 2vw, 20px); margin: 22px 0 8px; }
+    p { margin: 0 0 12px; }
+    .keywords { color: var(--muted); font-size: 14px; }
+    .tag { display: inline-block; padding: 2px 8px; border: 1px solid rgba(255,255,255,0.08);
+           border-radius: 999px; font-size: 12px; color: var(--muted); }
+
+    .footnote {
+      font-size: 12px; color: var(--muted); border-left: 2px solid rgba(255,255,255,0.12);
+      padding-left: 10px; margin: 8px 0 0 0;
+    }
+
+    figure { margin: 18px 0 0; padding: 14px; border: 1px dashed rgba(255,255,255,0.12);
+             border-radius: 12px; color: var(--muted); font-size: 14px; }
+    figcaption { margin-top: 6px; text-align: center; }
+    code.kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+               font-size: 12px; background: #0b0f14; color: #d8e6f5; border: 1px solid rgba(255,255,255,0.08);
+               padding: 2px 6px; border-radius: 6px; }
+
+    footer { margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
+
+  <!-- MathJax for LaTeX in text (adds macros for \vx, \vy, \w) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        macros: {
+          vx: "\\mathrm{v}_x",
+          vy: "\\mathrm{v}_y",
+          w: "\\omega"
+        }
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="wrap">
     <header>
-      <div class="logo">🎬</div>
       <div>
-        <h1>我的视频作品集</h1>
-        <div class="muted">极简版 · 纯静态 · 适合 GitHub Pages</div>
+        <div class="title">Unitree Go2 — Reinforcement Learning Navigation (Video & Paper Abstract)</div>
+        <div class="subtitle">Dual‑pipeline RL • Gazebo TD3 • Isaac Lab PPO • 5G Edge Offloading</div>
       </div>
+      <div class="tag">Single page · Deployable on GitHub Pages</div>
     </header>
 
-    <!-- 把下面每个 <article class="card"> 都看作一条作品，复制/粘贴即可新增。 -->
-    <section class="grid">
-      <article class="card">
-        <div class="player">
-          <!-- YouTube Shorts 也用标准 embed 地址，只需填入视频 ID 即可（KqNnR1GZ-HE） -->
-          <iframe
-            src="https://www.youtube.com/embed/KqNnR1GZ-HE"
-            title="我的作品短片"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen></iframe>
-        </div>
-        <div class="content">
-          <h3 class="title">我的作品短片</h3>
-          <p class="muted" style="margin:.25rem 0 0">来自 YouTube Shorts。</p>
-          <div class="meta">YouTube · ID: KqNnR1GZ-HE</div>
-        </div>
-      </article>
-
-      <!-- 示例：再加一个视频只需复制上面的 <article>，把 embed ID 和标题改掉即可。
-      <article class="card">
-        <div class="player">
-          <iframe src="https://www.youtube.com/embed/替换为ID" title="标题" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="content">
-          <h3 class="title">标题</h3>
-          <p class="muted">一句简介。</p>
-          <div class="meta">YouTube · ID: 替换为ID</div>
-        </div>
-      </article>
-      -->
+    <section class="card video-card" aria-label="Demo Video">
+      <iframe class="video" src="https://www.youtube.com/embed/KqNnR1GZ-HE" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </section>
 
+    <article class="card paper" aria-label="Paper Content">
+      <h2>Abstract</h2>
+      <p>
+        We present a dual-pipeline reinforcement learning study for quadruped navigation on the Unitree Go2, comprising two independently trained systems: Pipeline A is a LiDAR-centric TD3 policy trained in Gazebo with simple velocity-target inputs, and Pipeline B a two-stage training setup in Isaac Lab/Isaac Sim. In Stage~1, we train a low-level joint-space locomotion controller (velocity tracking) on rough terrains with heavy domain randomization. In Stage~2, we freeze the low-level controller and train a high-level navigation policy (PPO) to output $(\vx,\vy,\w)$ at 5~Hz. After establishing a Gazebo baseline, we focus on Isaac Lab's training mechanics, leveraging well-tuned backbones (PPO) and centering our contribution on terrain design, domain randomization, and reward shaping. We design observation, reward, and termination functions for goal reaching, velocity regulation, obstacle avoidance, and motion smoothness; and we build a model inference deployment pipeline supporting on-board inference on Jetson and edge offloading to a Linux server. Beyond task success and safety, we report round trip time metrics (mean / p95 per inference) to assess whether 5G offloading is beneficial. Our contributions are: (1) a compact CNN-based LiDAR encoder for high-dimensional inputs; (2) shaped rewards combining distance progress, heading discipline, and near-field collision penalties; (3) a reproducible PPO navigation configuration in Isaac Lab with curriculum and sensor clipping, and configurable backbones (native PPO); and (4) a measurement-ready model deployment pipeline with instrumentation and a standardized protocol.
+      </p>
+
+      <h3>IEEE Keywords</h3>
+      <p class="keywords">Quadruped robots; Reinforcement learning; 5G edge computing; Navigation; Isaac Lab; Unitree Go2.</p>
+
+      <h2>Introduction</h2>
+      <p>
+        Autonomous quadrupeds must safely navigate cluttered spaces under tight compute budgets. Modern RL/DRL policies can learn robust behaviors in simulation, but field deployment often hits two bottlenecks: limited on-board inference on embedded platforms and perception–control latency/jitter introduced by network offloading. 5G promises higher throughput and lower jitter than Wi‑Fi, while mobile edge computing (MEC) can shorten the round‑trip time (RTT) by placing inference close to the robot. This paper studies how to structure algorithms, training environments, and a deployment pipeline so that latency trade‑offs can be measured transparently on a Unitree Go2.
+      </p>
+      <div class="footnote">
+        <strong>Note on RTT.</strong> RTT is the total time for a message to travel from sender to receiver and back, including transmission, queuing, server processing, and the return path; typically measured in milliseconds.
+      </div>
+
+      <figure>
+        <div>[Figure placeholder] Put your figure here (corresponds to LaTeX \begin{figure}).</div>
+        <figcaption>Overview: Dual‑pipeline training & deployment.</figcaption>
+      </figure>
+    </article>
+
     <footer>
-      <p></p>
-      <p></code></p>
+      <p>© <span id="y"></span> Go2 RL Project · Deploy with <code class="kbd">index.html</code>.</p>
     </footer>
   </div>
+
+  <script>
+    // 年份
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
