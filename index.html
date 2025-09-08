@@ -71,6 +71,7 @@
     a:hover { text-decoration: underline; }
       /* Responsive images inside the paper */
     .paper img { display:block; max-width:100%; height:auto; border-radius:12px; border:1px solid rgba(255,255,255,0.12); }
+    .video-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin-top:14px; }
 </style>
 
   <!-- MathJax for LaTeX in text (adds macros for \vx, \vy, \w) -->
@@ -100,8 +101,17 @@
       <div class="tag">Single page · Deployable on GitHub Pages</div>
     </header>
 
-    <section class="card video-card" aria-label="Demo Video">
-      <iframe class="video" src="https://www.youtube.com/embed/KqNnR1GZ-HE" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    $1
+
+    <section class="video-grid" aria-label="Training Videos">
+      <div class="card video-card">
+        <iframe class="video" src="https://www.youtube.com/embed/Cff0wIKKi_c" title="Gazebo training video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <div class="subtitle" style="margin:8px 6px 2px">Gazebo training</div>
+      </div>
+      <div class="card video-card">
+        <iframe class="video" src="https://www.youtube.com/embed/sY392JjLkl4" title="Isaac Lab training video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <div class="subtitle" style="margin:8px 6px 2px">Isaac Lab training</div>
+      </div>
     </section>
 
     <article class="card paper" aria-label="Paper Content">
