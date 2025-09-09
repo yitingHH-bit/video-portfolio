@@ -118,22 +118,7 @@
     </section>
 
     <article class="card paper" aria-label="Paper Content">
-      <h2>Abstract</h2>
-      <p>
-        We present a dual-pipeline reinforcement learning study for quadruped navigation on the Unitree Go2, comprising two independently trained systems: Pipeline A is a LiDAR-centric TD3 policy trained in Gazebo with simple velocity-target inputs, and Pipeline B a two-stage training setup in Isaac Lab/Isaac Sim. In Stage~1, we train a low-level joint-space locomotion controller (velocity tracking) on rough terrains with heavy domain randomization. In Stage~2, we freeze the low-level controller and train a high-level navigation policy (PPO) to output $(\vx,\vy,\w)$ at 5~Hz. After establishing a Gazebo baseline, we focus on Isaac Lab's training mechanics, leveraging well-tuned backbones (PPO) and centering our contribution on terrain design, domain randomization, and reward shaping. We design observation, reward, and termination functions for goal reaching, velocity regulation, obstacle avoidance, and motion smoothness; and we build a model inference deployment pipeline supporting on-board inference on Jetson and edge offloading to a Linux server. Beyond task success and safety, we report round trip time metrics (mean / p95 per inference) to assess whether 5G offloading is beneficial. Our contributions are: (1) a compact CNN-based LiDAR encoder for high-dimensional inputs; (2) shaped rewards combining distance progress, heading discipline, and near-field collision penalties; (3) a reproducible PPO navigation configuration in Isaac Lab with curriculum and sensor clipping, and configurable backbones (native PPO); and (4) a measurement-ready model deployment pipeline with instrumentation and a standardized protocol.
-      </p>
-
-      <h3>Keywords</h3>
-      <p class="keywords">Quadruped robots; Reinforcement learning; 5G edge computing; Navigation; Isaac Lab; Unitree Go2.</p>
-
-      <h2>Introduction</h2>
-      <p>
-        Autonomous quadrupeds must safely navigate cluttered spaces under tight compute budgets. Modern RL/DRL policies can learn robust behaviors in simulation, but field deployment often hits two bottlenecks: limited on-board inference on embedded platforms and perception–control latency/jitter introduced by network offloading. 5G promises higher throughput and lower jitter than Wi‑Fi, while mobile edge computing (MEC) can shorten the round‑trip time (RTT) by placing inference close to the robot. This paper studies how to structure algorithms, training environments, and a deployment pipeline so that latency trade‑offs can be measured transparently on a Unitree Go2.
-      </p>
-      <div class="footnote">
-        <strong>Note on RTT.</strong> RTT is the total time for a message to travel from sender to receiver and back, including transmission, queuing, server processing, and the return path; typically measured in milliseconds.
-      </div>
-
+     
       <figure>
         <a href="assets/23-04-09.png" target="_blank" rel="noopener">
           <img src="assets/23-04-09.png" alt="Training/experiment snapshot — 23-04-09" loading="lazy">
